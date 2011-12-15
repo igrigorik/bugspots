@@ -11,11 +11,19 @@ ARGV << '--help' if ARGV.empty?
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: bugspots /path/to/git/repo"
+  
+  # Option: Set Depth
+  opts.on('-d', '--depth [depth]', 'depth of log crawl (integer)') do |d|
+    options[:depth] = d.to_i
+  end
 end.parse!
+
+# Set a reasonable default of depth
+options[:depth] ||= 500
 
 puts "Scanning #{ARGV[0]} repo".foreground(:green)
 
-fixes, spots = Bugspots.scan(ARGV[0])
+fixes, spots = Bugspots.scan(ARGV[0], options[:depth])
 
 puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
 puts
