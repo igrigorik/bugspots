@@ -25,7 +25,7 @@ module Bugspots
     end
 
     spots = hotspots.sort_by {|k,v| v}.reverse.collect do |spot|
-      Spot.new(spot.first, spot.last.round(4))
+      Spot.new(spot.first, sprintf('%.4f', spot.last))
     end
 
     return fixes, spots
