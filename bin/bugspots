@@ -12,6 +12,11 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: bugspots /path/to/git/repo"
 
+  # Option: Set Branch
+  opts.on('-b', '--branch [name]', 'branch to crawl') do |b|
+    options[:branch] = b.to_s
+  end
+
   # Option: Set Depth
   opts.on('-d', '--depth [depth]', 'depth of log crawl (integer)') do |d|
     options[:depth] = d.to_i
@@ -28,12 +33,15 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-# Set a reasonable default of depth
+# Set a reasonable default of depth 
 options[:depth] ||= 500
+
+# Set master as the default branch
+options[:branch] ||= "master"
 
 puts "Scanning #{ARGV[0]} repo".foreground(:green)
 
-fixes, spots = Bugspots.scan(ARGV[0], options[:depth], options[:words])
+fixes, spots = Bugspots.scan(ARGV[0], options[:branch], options[:depth], options[:words])
 
 puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
 puts
