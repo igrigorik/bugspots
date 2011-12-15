@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'bugspots'
+require 'optparse'
+
+ARGV << '--help' if ARGV.empty?
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: bugspots /path/to/git/repo"
+end.parse!
+
+Bugspots.scan(ARGV[0])
