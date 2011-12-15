@@ -17,6 +17,11 @@ OptionParser.new do |opts|
     options[:depth] = d.to_i
   end
   
+  # Option: Set Bugfix Indicator
+  opts.on('-w', '--words ["w1,w2"]', 'bugfix indicator, ie: "fixes,closed"') do |words|
+    options[:words] = words
+  end
+
   # Option: Set Timestamp Display
   opts.on('--display-timestamps', 'show timestamps of each identified fix commit') do |dt|
     options[:display_timestamps] = true
@@ -28,7 +33,7 @@ options[:depth] ||= 500
 
 puts "Scanning #{ARGV[0]} repo".foreground(:green)
 
-fixes, spots = Bugspots.scan(ARGV[0], options[:depth])
+fixes, spots = Bugspots.scan(ARGV[0], options[:depth], options[:words])
 
 puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
 puts
