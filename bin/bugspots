@@ -16,6 +16,11 @@ OptionParser.new do |opts|
   opts.on('-d', '--depth [depth]', 'depth of log crawl (integer)') do |d|
     options[:depth] = d.to_i
   end
+  
+  # Option: Set Timestamp Display
+  opts.on('--display-timestamps', 'show timestamps of each identified fix commit') do |dt|
+    options[:display_timestamps] = true
+  end
 end.parse!
 
 # Set a reasonable default of depth
@@ -30,7 +35,10 @@ puts
 
 puts "\tFixes:".foreground(:green).underline
 fixes.each do |fix|
-  puts "\t\t- #{fix.message}".foreground(:yellow)
+  message = "\t\t- "
+  message << "#{fix.date} " if options[:display_timestamps]
+  message << "#{fix.message}"
+  puts message.foreground(:yellow)
 end
 
 puts "\n"
