@@ -13,4 +13,21 @@ OptionParser.new do |opts|
   opts.banner = "Usage: bugspots /path/to/git/repo"
 end.parse!
 
-Bugspots.scan(ARGV[0])
+puts "Scanning #{ARGV[0]} repo".foreground(:green)
+
+fixes, spots = Bugspots.scan(ARGV[0])
+
+puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
+puts
+
+puts "\tFixes:".foreground(:green).underline
+fixes.each do |fix|
+  puts "\t\t- #{fix.message}".foreground(:yellow)
+end
+
+puts "\n"
+puts "\tHotspots:".foreground(:green).underline
+spots.each do |spot|
+  puts "\t\t#{spot.score}".foreground(:red) + " - #{spot.file}".foreground(:yellow)
+end
+
