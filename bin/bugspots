@@ -11,12 +11,12 @@ ARGV << '--help' if ARGV.empty?
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: bugspots /path/to/git/repo"
-  
+
   # Option: Set Depth
   opts.on('-d', '--depth [depth]', 'depth of log crawl (integer)') do |d|
     options[:depth] = d.to_i
   end
-  
+
   # Option: Set Timestamp Display
   opts.on('--display-timestamps', 'show timestamps of each identified fix commit') do |dt|
     options[:display_timestamps] = true
