@@ -5,6 +5,7 @@ module Bugspots
   Fix = Struct.new(:message, :date, :files)
   Spot = Struct.new(:file, :score)
 
+<<<<<<< HEAD
   def self.scan(repo, depth = 500, words = nil)
     repo = Grit::Repo.new(repo)
     fixes = []
@@ -17,6 +18,14 @@ module Bugspots
 
     repo.commits('master', depth).each do |commit|  
       if commit.message =~ message_matchers
+=======
+  def self.scan(repo, depth = 500, branch = "master")
+    repo = Grit::Repo.new(repo)
+    fixes = []
+
+    repo.commits(branch, depth).each do |commit| 
+      if commit.message =~ /fix(es|ed)|close(s|d)/
+>>>>>>> Add branch option to executable.
         files = commit.stats.files.map {|s| s.first}    
         fixes << Fix.new(commit.short_message, commit.date, files)
       end

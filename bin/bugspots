@@ -26,16 +26,29 @@ OptionParser.new do |opts|
   opts.on('--display-timestamps', 'show timestamps of each identified fix commit') do |dt|
     options[:display_timestamps] = true
   end
+
+  # Option: Set Branch
+  opts.on('-b', '--branch [name]', 'branch to crawl (string)') do |b|
+    options[:branch] = b.to_s
+  end
+
 end.parse!
 
 # Set a reasonable default of depth
 options[:depth] ||= 500
 
+# Set the default branch as master
+options[:branch] ||= "master"
+
 puts "Scanning #{ARGV[0]} repo".foreground(:green)
 
+<<<<<<< HEAD
 fixes, spots = Bugspots.scan(ARGV[0], options[:depth], options[:words])
+=======
+fixes, spots = Bugspots.scan(ARGV[0], options[:depth], options[:branch])
+>>>>>>> Add branch option to executable.
 
-puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
+puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots on the #{options[:branch]} branch:".foreground(:yellow)
 puts
 
 puts "\tFixes:".foreground(:green).underline
