@@ -5,12 +5,18 @@ module Bugspots
   Fix = Struct.new(:message, :date, :files)
   Spot = Struct.new(:file, :score)
 
-  def self.scan(repo, depth = 500)
+  def self.scan(repo, depth = 500, words = nil)
     repo = Grit::Repo.new(repo)
     fixes = []
 
+    if words
+      message_matchers = /#{words.split(',').join('|')}/
+    else
+      message_matchers = /fix(es|ed)|close(s|d)/
+    end
+
     repo.commits('master', depth).each do |commit|  
-      if commit.message =~ /fix(es|ed)|close(s|d)/
+      if commit.message =~ message_matchers
         files = commit.stats.files.map {|s| s.first}    
         fixes << Fix.new(commit.short_message, commit.date, files)
       end
