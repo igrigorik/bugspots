@@ -9,9 +9,9 @@ module Bugspots
     repo = Grit::Repo.new(repo)
     fixes = []
 
-    repo.commits('master', depth).each do |commit|  
+    repo.commits('master', depth).each do |commit|
       if commit.message =~ /fix(es|ed)|close(s|d)/
-        files = commit.stats.files.map {|s| s.first}    
+        files = commit.stats.files.map {|s| s.first}
         fixes << Fix.new(commit.short_message, commit.date, files)
       end
     end
