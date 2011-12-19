@@ -12,7 +12,7 @@ module Bugspots
     if words
       message_matchers = /#{words.split(',').join('|')}/
     else
-      message_matchers = /fix(es|ed)?|close(s|d)/i
+      message_matchers = /fix(es|ed)?|close(s|d)?/i
     end
 
     repo.commits(branch, depth).each do |commit|  
