@@ -10,13 +10,17 @@ Point bugspots at any git repo and it will identify the hotspots for you.
 
 ```
 $> gem install bugspots
-$> bugspots /path/to/repo
+$> git bugspots /path/to/repo
+$> git bugspots . # (in current git directory)
 ```
 
 ## Results
 
 ```
-$> bugspots /git/eventmachine
+$> cd /your/git/repo
+$> git bugspots .
+
+  .. example output .. 
 
 	Scanning /git/eventmachine repo
 	Found 31 bugfix commits, with 23 hotspots:
