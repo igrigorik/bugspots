@@ -17,7 +17,7 @@ module Bugspots
 
     repo.commits(branch, depth).each do |commit|  
       if commit.message =~ message_matchers
-        files = commit.stats.files.map {|s| s.first}    
+        files = commit.stats.files.map {|s| s.first}.select{ |s| repo.tree(branch)/s }    
         fixes << Fix.new(commit.short_message, commit.date, files)
       end
     end
