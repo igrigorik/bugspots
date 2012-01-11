@@ -23,8 +23,13 @@ OptionParser.new do |opts|
   end
   
   # Option: Set Bugfix Indicator
-  opts.on('-w', '--words ["w1,w2"]', 'bugfix indicator, ie: "fixes,closed"') do |words|
-    options[:words] = words
+  opts.on('-w', '--words ["w1,w2"]', 'bugfix indicator word list, ie: "fixes,closed"') do |words|
+    options[:regex] = Regexp.new(words.split(',').join('|'))
+  end
+  
+  # Option: Set Bugfix Indicator
+  opts.on('-r', '--regex [regex]', Regexp, 'bugfix indicator regex, ie: "fix(es|ed)?" or "/fixes #(\d+)/i"') do |regex|
+    options[:regex] = regex
   end
 
   # Option: Set Timestamp Display
@@ -41,7 +46,7 @@ options[:branch] ||= "master"
 
 puts "Scanning #{ARGV[0]} repo".foreground(:green)
 
-fixes, spots = Bugspots.scan(ARGV[0], options[:branch], options[:depth], options[:words])
+fixes, spots = Bugspots.scan(ARGV[0], options[:branch], options[:depth], options[:regex])
 
 puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
 puts
