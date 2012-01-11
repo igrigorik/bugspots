@@ -7,6 +7,9 @@ module Bugspots
 
   def self.scan(repo, branch = "master", depth = 500, words = nil)
     repo = Grit::Repo.new(repo)
+    unless repo.branches.find { |e| e.name == branch }
+      raise ArgumentError, "no such branch in the repo: #{branch}"
+    end
     fixes = []
 
     if words
