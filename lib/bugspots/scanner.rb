@@ -5,22 +5,18 @@ module Bugspots
   Fix = Struct.new(:message, :date, :files)
   Spot = Struct.new(:file, :score)
 
-  def self.scan(repo, branch = "master", depth = 500, words = nil)
+  def self.scan(repo, branch = "master", depth = 500, regex = nil)
     repo = Grit::Repo.new(repo)
     unless repo.branches.find { |e| e.name == branch }
       raise ArgumentError, "no such branch in the repo: #{branch}"
     end
     fixes = []
 
-    if words
-      message_matchers = /#{words.split(',').join('|')}/
-    else
-      message_matchers = /fix(es|ed)?|close(s|d)?/i
-    end
+    regex ||= /fix(es|ed)?|close(s|d)?/i
 
     tree = repo.tree(branch)
     repo.commits(branch, depth).each do |commit|  
-      if commit.message =~ message_matchers
+      if commit.message =~ regex
         files = commit.stats.files.map {|s| s.first}.select{ |s| tree/s }    
         fixes << Fix.new(commit.short_message, commit.date, files)
       end
