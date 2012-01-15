@@ -10,15 +10,15 @@ Point bugspots at any git repo and it will identify the hotspots for you.
 
 ```
 $> gem install bugspots
-$> git bugspots /path/to/repo
-$> git bugspots . # (in current git directory)
+$> bugspots /path/to/repo
+$> git bugspots (in root of current git project, --help for options)
 ```
 
 ## Results
 
 ```
 $> cd /your/git/repo
-$> git bugspots .
+$> git bugspots -d 500
 
   .. example output .. 
 
