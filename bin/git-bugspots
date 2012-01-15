@@ -1,66 +1,7 @@
 #!/usr/bin/env ruby
 
-lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
-$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
-
-require 'bugspots'
-require 'optparse'
-
-ARGV << '--help' if ARGV.empty?
-
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: bugspots /path/to/git/repo"
-
-  # Option: Set Branch
-  opts.on('-b', '--branch [name]', 'branch to crawl') do |b|
-    options[:branch] = b.to_s
-  end
-
-  # Option: Set Depth
-  opts.on('-d', '--depth [depth]', 'depth of log crawl (integer)') do |d|
-    options[:depth] = d.to_i
-  end
-  
-  # Option: Set Bugfix Indicator
-  opts.on('-w', '--words ["w1,w2"]', 'bugfix indicator word list, ie: "fixes,closed"') do |words|
-    options[:regex] = Regexp.new(words.split(',').join('|'))
-  end
-  
-  # Option: Set Bugfix Indicator
-  opts.on('-r', '--regex [regex]', Regexp, 'bugfix indicator regex, ie: "fix(es|ed)?" or "/fixes #(\d+)/i"') do |regex|
-    options[:regex] = regex
-  end
-
-  # Option: Set Timestamp Display
-  opts.on('--display-timestamps', 'show timestamps of each identified fix commit') do |dt|
-    options[:display_timestamps] = true
-  end
-end.parse!
-
-# Set a reasonable default of depth 
-options[:depth] ||= 500
-
-# Set master as the default branch
-options[:branch] ||= "master"
-
-puts "Scanning #{ARGV[0]} repo".foreground(:green)
-
-fixes, spots = Bugspots.scan(ARGV[0], options[:branch], options[:depth], options[:regex])
-
-puts "\tFound #{fixes.size} bugfix commits, with #{spots.size} hotspots:".foreground(:yellow)
-puts
-
-puts "\tFixes:".foreground(:green).underline
-fixes.each do |fix|
-  message = "\t\t- "
-  message << "#{fix.date} " if options[:display_timestamps]
-  message << "#{fix.message}"
-  puts message.foreground(:yellow)
+if ARGV.empty? or not Dir.exists? ARGV[0]
+  ARGV.unshift Dir.pwd
 end
 
-puts "\n"
-puts "\tHotspots:".foreground(:green).underline
-spots.each do |spot|
-  puts "\t\t#{spot.score}".foreground(:red) + " - #{spot.file}".foreground(:yellow)
-end
+exec("bugspots #{ARGV.join(' ')}")
