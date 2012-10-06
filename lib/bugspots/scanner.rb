@@ -12,7 +12,7 @@ module Bugspots
     end
     fixes = []
 
-    regex ||= /fix(es|ed)?|close(s|d)?/i
+    regex ||= /\b(fix(es|ed)?|close(s|d)?)\b/i
 
     tree = repo.tree(branch)
 
