@@ -4,4 +4,4 @@ if ARGV.empty? or not Dir.exists? ARGV[0]
   ARGV.unshift Dir.pwd
 end
 
-exec("bugspots #{ARGV.join(' ')}")
+exec 'bugspots', ARGV.join(' ')
