@@ -1,4 +1,3 @@
-require 'rainbow'
 require 'grit'
 
 module Bugspots
@@ -19,7 +18,7 @@ module Bugspots
     commit_list = repo.git.rev_list({:max_count => false, :no_merges => true, :pretty => "raw", :timeout => false}, branch)
     Grit::Commit.list_from_string(repo, commit_list).each do |commit|
       if commit.message =~ regex
-        files = commit.stats.files.map {|s| s.first}.select{ |s| tree/s }    
+        files = commit.stats.files.map {|s| s.first}.select{ |s| tree/s }
         fixes << Fix.new(commit.short_message, commit.date, files)
       end
     end
