@@ -14,7 +14,7 @@ module Bugspots
     end
 
     walker = Rugged::Walker.new(repo)
-    # walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
 
     tip = Rugged::Branch.lookup(repo, branch).tip.oid
     walker.push(tip)
@@ -31,7 +31,13 @@ module Bugspots
     hotspots = Hash.new(0)
     fixes.each do |fix|
       fix.files.each do |file|
-        t = 1 - ((Time.now - fix.date).to_f / (Time.now - fixes.last.date))
+        # The timestamp used in the equation is normalized from 0 to 1, where
+        # 0 is the earliest point in the code base, and 1 is now (where now is
+        # when the algorithm was run). Note that the score changes over time
+        # with this algorithm due to the moving normalization; it's not meant
+        # to provide some objective score, only provide a means of comparison
+        # between one file and another at any one point in time
+        t = 1 - ((Time.now - fix.date).to_f / (Time.now - fixes.first.date))
         hotspots[file] += 1/(1+Math.exp((-12*t)+12))
       end
     end
