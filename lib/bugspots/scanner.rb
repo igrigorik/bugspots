@@ -1,25 +1,30 @@
-require 'grit'
+require "rugged"
 
 module Bugspots
   Fix = Struct.new(:message, :date, :files)
   Spot = Struct.new(:file, :score)
 
   def self.scan(repo, branch = "master", depth = 500, regex = nil)
-    repo = Grit::Repo.new(repo)
-    unless repo.branches.find { |e| e.name == branch }
-      raise ArgumentError, "no such branch in the repo: #{branch}"
-    end
+    regex ||= /\b(fix(es|ed)?|close(s|d)?)\b/i
     fixes = []
 
-    regex ||= /\b(fix(es|ed)?|close(s|d)?)\b/i
+    repo = Rugged::Repository.new(repo)
+    unless Rugged::Branch.each_name(repo).sort.find { |b| b == branch }
+      raise ArgumentError, "no such branch in the repo: #{branch}"
+    end
 
-    tree = repo.tree(branch)
+    walker = Rugged::Walker.new(repo)
+    # walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
 
-    commit_list = repo.git.rev_list({:max_count => false, :no_merges => true, :pretty => "raw", :timeout => false}, branch)
-    Grit::Commit.list_from_string(repo, commit_list).each do |commit|
+    tip = Rugged::Branch.lookup(repo, branch).tip.oid
+    walker.push(tip)
+
+    walker.each do |commit|
       if commit.message =~ regex
-        files = commit.stats.files.map {|s| s.first}.select{ |s| tree/s }
-        fixes << Fix.new(commit.short_message, commit.date, files)
+        files = commit.diff(commit.parents.first).deltas.collect do |d|
+          d.old_file[:path]
+        end
+        fixes << Fix.new(commit.message.split("\n").first, commit.time, files)
       end
     end
 

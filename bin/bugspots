@@ -68,6 +68,8 @@ begin
     puts "\t\t#{spot.score}".foreground(:red) + " - #{spot.file}".foreground(:yellow)
   end
 
-rescue Grit::InvalidGitRepositoryError
+rescue Exception => e
+  p e
+  p e.backtrace.first(5).join("\n")
   puts "Invalid Git repository - please run from or specify the full path to the root of the project.".foreground(:red)
 end
