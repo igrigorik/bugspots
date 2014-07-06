@@ -9,16 +9,13 @@ module Bugspots
     fixes = []
 
     repo = Rugged::Repository.new(repo)
-    unless Rugged::Branch.each_name(repo).sort.find { |b| b == branch }
+    unless repo.branches.each_name(:local).sort.find { |b| b == branch }
       raise ArgumentError, "no such branch in the repo: #{branch}"
     end
 
     walker = Rugged::Walker.new(repo)
     walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
-
-    tip = Rugged::Branch.lookup(repo, branch).tip.oid
-    walker.push(tip)
-
+    walker.push(repo.branches[branch].target)
     walker.each do |commit|
       if commit.message =~ regex
         files = commit.diff(commit.parents.first).deltas.collect do |d|
