@@ -17,7 +17,7 @@ module Bugspots
     walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
     walker.push(repo.branches[branch].target)
     walker.each do |commit|
-      if commit.message =~ regex
+      if commit.message.scrub =~ regex
         files = commit.diff(commit.parents.first).deltas.collect do |d|
           d.old_file[:path]
         end
