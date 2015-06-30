@@ -21,7 +21,7 @@ module Bugspots
         files = commit.diff(commit.parents.first).deltas.collect do |d|
           d.old_file[:path]
         end
-        fixes << Fix.new(commit.message.split("\n").first, commit.time, files)
+        fixes << Fix.new(commit.message.scrub.split("\n").first, commit.time, files)
       end
     end
 
