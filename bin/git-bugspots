@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'shellwords'
+
 if ARGV.empty? or not Dir.exists? ARGV[0]
   ARGV.unshift Dir.pwd
 end
 
-exec 'bugspots', ARGV.join(' ')
+cmd = "bugspots #{Shellwords.escape(ARGV[0])} #{ARGV[1..-1].join(' ')}"
+exec cmd
