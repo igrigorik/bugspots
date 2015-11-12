@@ -26,6 +26,7 @@ module Bugspots
     end
 
     hotspots = Hash.new(0)
+    currentTime = Time.now
     fixes.each do |fix|
       fix.files.each do |file|
         # The timestamp used in the equation is normalized from 0 to 1, where
@@ -34,7 +35,7 @@ module Bugspots
         # with this algorithm due to the moving normalization; it's not meant
         # to provide some objective score, only provide a means of comparison
         # between one file and another at any one point in time
-        t = 1 - ((Time.now - fix.date).to_f / (Time.now - fixes.first.date))
+        t = 1 - ((currentTime - fix.date).to_f / (currentTime - fixes.first.date))
         hotspots[file] += 1/(1+Math.exp((-12*t)+12))
       end
     end
