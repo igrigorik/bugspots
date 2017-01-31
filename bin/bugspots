@@ -40,9 +40,6 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-# Set a reasonable default of depth
-options[:depth] ||= 500
-
 # Set master as the default branch
 options[:branch] ||= "master"
 
