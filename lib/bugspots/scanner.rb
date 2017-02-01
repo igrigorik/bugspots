@@ -4,7 +4,7 @@ module Bugspots
   Fix = Struct.new(:message, :date, :files)
   Spot = Struct.new(:file, :score)
 
-  def self.scan(repo, branch = "master", depth = 500, regex = nil)
+  def self.scan(repo, branch = "master", depth = nil, regex = nil)
     regex ||= /\b(fix(es|ed)?|close(s|d)?)\b/i
     fixes = []
 
@@ -14,8 +14,9 @@ module Bugspots
     end
 
     walker = Rugged::Walker.new(repo)
-    walker.sorting(Rugged::SORT_TOPO | Rugged::SORT_REVERSE)
+    walker.sorting(Rugged::SORT_TOPO)
     walker.push(repo.branches[branch].target)
+    walker = walker.take(depth) if depth
     walker.each do |commit|
       if commit.message.scrub =~ regex
         files = commit.diff(commit.parents.first).deltas.collect do |d|
@@ -27,6 +28,7 @@ module Bugspots
 
     hotspots = Hash.new(0)
     currentTime = Time.now
+    oldest_fix_date = fixes.last.date
     fixes.each do |fix|
       fix.files.each do |file|
         # The timestamp used in the equation is normalized from 0 to 1, where
@@ -35,7 +37,7 @@ module Bugspots
         # with this algorithm due to the moving normalization; it's not meant
         # to provide some objective score, only provide a means of comparison
         # between one file and another at any one point in time
-        t = 1 - ((currentTime - fix.date).to_f / (currentTime - fixes.first.date))
+        t = 1 - ((currentTime - fix.date).to_f / (currentTime - oldest_fix_date))
         hotspots[file] += 1/(1+Math.exp((-12*t)+12))
       end
     end
