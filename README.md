@@ -5,7 +5,8 @@ An implementation of the simple bug prediction heuristic outlined by the Google 
 > Well, we actually have a great, authoritative record of where code has been requiring fixes: our bug tracker and our source control commit log! The research indicates that predicting bugs from the source history works very well, so we decided to deploy it at Google.
 
 Point bugspots at any git repo and it will identify the hotspots for you.
-
+##dependency
+cmake : apt-get install cmake
 ## Usage
 
 ```bash
