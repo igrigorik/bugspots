@@ -12,7 +12,8 @@ Point bugspots at any git repo and it will identify the hotspots for you.
 $> gem install bugspots
 $> bugspots /path/to/repo
 $> git bugspots (in root of current git project, --help for options)
-```
+``````
+
 
 ## Results
 
